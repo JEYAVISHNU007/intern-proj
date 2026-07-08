@@ -1,0 +1,1192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Attendance Pro</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f0f4f9;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    /* Animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      padding: 32px 32px 28px;
+      border-radius: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60%;
+      right: -10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.2), transparent 70%);
+      border-radius: 50%;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -40%;
+      left: -5%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent 70%);
+      border-radius: 50%;
+      animation: float 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -20px) scale(1.1); }
+      66% { transform: translate(-20px, 15px) scale(0.9); }
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .header h1 {
+      font-size: 30px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: -0.5px;
+    }
+
+    .header h1 i {
+      color: #60a5fa;
+      font-size: 34px;
+      filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.3));
+    }
+
+    .header-badge {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #93c5fd;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .header-badge i {
+      font-size: 10px;
+      color: #4ade80;
+    }
+
+    .header p {
+      margin-top: 10px;
+      opacity: 0.7;
+      font-size: 14px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .header-stat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    .header-stat strong {
+      color: white;
+      font-size: 16px;
+    }
+
+    .header-stat i {
+      color: #60a5fa;
+      font-size: 14px;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 24px 28px 28px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      letter-spacing: -0.2px;
+    }
+
+    .card-title i {
+      color: #2563eb;
+      font-size: 20px;
+      width: 28px;
+      text-align: center;
+      background: #eef2ff;
+      padding: 6px;
+      border-radius: 10px;
+    }
+
+    /* ===== VIDEO ===== */
+    .video-wrapper {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #0a0f1a;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    }
+
+    #video {
+      width: 100%;
+      display: block;
+      transform: scaleX(-1);
+      min-height: 260px;
+      background: #0a0f1a;
+    }
+
+    .video-overlay {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .video-overlay .dot {
+      width: 6px;
+      height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      display: inline-block;
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    .video-corner {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .video-corner .hint {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      color: rgba(255, 255, 255, 0.8);
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ===== STATUS ===== */
+    #status {
+      margin-top: 14px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      min-height: 52px;
+      transition: all 0.4s ease;
+    }
+
+    #status i {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    #status.info {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+      color: #0369a1;
+    }
+
+    #status.success {
+      background: #f0fdf4;
+      border-color: #86efac;
+      color: #15803d;
+    }
+
+    #status.error {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+    }
+
+    #status.warning {
+      background: #fffbeb;
+      border-color: #fcd34d;
+      color: #92400e;
+    }
+
+    #status.loading {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #475569;
+    }
+
+    /* ===== FORM ===== */
+    .input-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .input-group input {
+      flex: 1;
+      min-width: 160px;
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+      background: #fafcff;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .input-group input:focus {
+      border-color: #2563eb;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+    }
+
+    .input-group input::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      font-family: inherit;
+      letter-spacing: 0.2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn:hover:not(:disabled)::after {
+      opacity: 1;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 28px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 28px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-success:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      box-shadow: 0 4px 16px rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 28px rgba(239, 68, 68, 0.35);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #64748b;
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      transform: translateY(-2px);
+    }
+
+    .btn-full {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-sm {
+      padding: 10px 18px;
+      font-size: 13px;
+      border-radius: 12px;
+    }
+
+    /* ===== TABLE ===== */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 6px 0 14px;
+      border-radius: 14px;
+      border: 1px solid #f1f5f9;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: #f8fafc;
+    }
+
+    th {
+      text-align: left;
+      padding: 14px 16px 14px 16px;
+      font-weight: 600;
+      color: #475569;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #fafcff;
+    }
+
+    .log-empty {
+      text-align: center;
+      padding: 40px 0 !important;
+      color: #94a3b8;
+    }
+
+    .log-empty i {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 10px;
+      color: #cbd5e1;
+    }
+
+    .log-empty span {
+      display: block;
+      font-size: 14px;
+    }
+
+    .name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .name-cell .avatar {
+      width: 32px;
+      height: 32px;
+      background: #eef2ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2563eb;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .time-cell {
+      font-weight: 500;
+      color: #2563eb;
+    }
+
+    /* ===== BADGE ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #1e293b;
+    }
+
+    .badge i {
+      color: #2563eb;
+    }
+
+    .badge .count {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 15px;
+    }
+
+    /* ===== FOOTER ACTIONS ===== */
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 380px;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #0f172a;
+      color: white;
+      padding: 16px 20px;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: auto;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .toast.success {
+      border-left: 4px solid #22c55e;
+    }
+
+    .toast.error {
+      border-left: 4px solid #ef4444;
+    }
+
+    .toast.warning {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .toast i {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .toast .toast-msg {
+      font-size: 14px;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .toast .toast-close {
+      background: rgba(255,255,255,0.05);
+      border: none;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .toast .toast-close:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 640px) {
+      body {
+        padding: 12px;
+      }
+
+      .header {
+        padding: 22px 20px 20px;
+        border-radius: 20px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .header-stats {
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .card {
+        padding: 18px 16px 20px;
+        border-radius: 16px;
+      }
+
+      .input-group {
+        flex-direction: column;
+      }
+
+      .input-group input {
+        min-width: auto;
+      }
+
+      .btn {
+        justify-content: center;
+        width: 100%;
+        padding: 14px 20px;
+      }
+
+      .footer-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .badge {
+        justify-content: center;
+      }
+
+      .header-badge {
+        font-size: 10px;
+        padding: 4px 12px;
+      }
+
+      .toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        max-width: none;
+      }
+
+      th, td {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-top">
+        <h1>
+          <i class="fas fa-id-card"></i>
+          Attendance Pro
+        </h1>
+        <span class="header-badge">
+          <i class="fas fa-circle"></i>
+          Live
+        </span>
+      </div>
+      <p>
+        <i class="fas fa-shield-alt"></i>
+        Face recognition · Local storage · Private & secure
+      </p>
+      <div class="header-stats">
+        <div class="header-stat">
+          <i class="fas fa-users"></i>
+          Registered: <strong id="peopleCount">0</strong>
+        </div>
+        <div class="header-stat">
+          <i class="fas fa-clipboard-check"></i>
+          Today: <strong id="todayCount">0</strong>
+        </div>
+        <div class="header-stat">
+          <i class="fas fa-clock"></i>
+          Total: <strong id="totalCount">0</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- VIDEO CARD -->
+  <div class="card">
+    <div class="video-wrapper">
+      <video id="video" autoplay muted playsinline></video>
+      <div class="video-overlay">
+        <span class="dot"></span>
+        Camera
+      </div>
+      <div class="video-corner">
+        <span class="hint">
+          <i class="fas fa-face-smile"></i> Face the camera
+        </span>
+        <span class="hint">
+          <i class="fas fa-rotate"></i> Mirror view
+        </span>
+      </div>
+    </div>
+    <div id="status">
+      <i class="fas fa-spinner fa-pulse"></i>
+      Loading face recognition...
+    </div>
+  </div>
+
+  <!-- REGISTER CARD -->
+  <div class="card">
+    <div class="card-title">
+      <i class="fas fa-user-plus"></i>
+      Register Person
+    </div>
+    <div class="input-group">
+      <input id="nameInput" type="text" placeholder="Enter full name..." />
+      <button id="registerBtn" class="btn btn-primary" disabled>
+        <i class="fas fa-camera-retro"></i> Capture & Register
+      </button>
+    </div>
+    <div style="margin-top: 12px; font-size: 13px; color: #94a3b8; display: flex; gap: 16px; flex-wrap: wrap;">
+      <span><i class="fas fa-circle-check" style="color:#22c55e;"></i> Look directly at camera</span>
+      <span><i class="fas fa-circle-check" style="color:#22c55e;"></i> Good lighting helps</span>
+    </div>
+  </div>
+
+  <!-- SCAN CARD -->
+  <div class="card">
+    <div class="card-title">
+      <i class="fas fa-fingerprint"></i>
+      Mark Attendance
+    </div>
+    <button id="scanBtn" class="btn btn-success btn-full" disabled>
+      <i class="fas fa-scan"></i> Scan Face & Mark Today
+    </button>
+  </div>
+
+  <!-- LOG CARD -->
+  <div class="card">
+    <div class="card-title">
+      <i class="fas fa-clock"></i>
+      Attendance Log
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th><i class="fas fa-user"></i> Name</th>
+            <th><i class="fas fa-calendar"></i> Date</th>
+            <th><i class="fas fa-clock"></i> Time</th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+
+    <div class="footer-actions">
+      <span class="badge">
+        <i class="fas fa-database"></i>
+        <span class="count" id="logCount">0</span> records
+      </span>
+      <button id="clearBtn" class="btn btn-danger btn-sm">
+        <i class="fas fa-trash-alt"></i> Clear All
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- face-api.js -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js">
+</script>
+
+<script>
+  (function() {
+    'use strict';
+
+    // ===== DOM REFS =====
+    const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+    const video = document.getElementById('video');
+    const statusEl = document.getElementById('status');
+    const registerBtn = document.getElementById('registerBtn');
+    const scanBtn = document.getElementById('scanBtn');
+    const nameInput = document.getElementById('nameInput');
+    const logBody = document.getElementById('logBody');
+    const clearBtn = document.getElementById('clearBtn');
+    const logCount = document.getElementById('logCount');
+    const peopleCount = document.getElementById('peopleCount');
+    const todayCount = document.getElementById('todayCount');
+    const totalCount = document.getElementById('totalCount');
+    const toastContainer = document.getElementById('toastContainer');
+
+    const MATCH_THRESHOLD = 0.5;
+
+    // ===== LOCAL STORAGE =====
+    function getPeople() {
+      return JSON.parse(localStorage.getItem('people') || '[]');
+    }
+
+    function savePeople(people) {
+      localStorage.setItem('people', JSON.stringify(people));
+      updateStats();
+    }
+
+    function getLog() {
+      return JSON.parse(localStorage.getItem('log') || '[]');
+    }
+
+    function saveLog(log) {
+      localStorage.setItem('log', JSON.stringify(log));
+      updateStats();
+      renderLog();
+    }
+
+    // ===== UPDATE STATS =====
+    function updateStats() {
+      const people = getPeople();
+      const log = getLog();
+      const today = new Date().toISOString().slice(0, 10);
+      const todayLogs = log.filter(r => r.date === today);
+
+      peopleCount.textContent = people.length;
+      todayCount.textContent = todayLogs.length;
+      totalCount.textContent = log.length;
+    }
+
+    // ===== TOAST =====
+    function showToast(message, type = 'success') {
+      const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        info: 'fas fa-info-circle'
+      };
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `
+        <i class="${icons[type] || icons.info}"></i>
+        <span class="toast-msg">${message}</span>
+        <button class="toast-close"><i class="fas fa-xmark"></i></button>
+      `;
+
+      toast.querySelector('.toast-close').addEventListener('click', () => {
+        toast.remove();
+      });
+
+      toastContainer.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(40px)';
+        setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    }
+
+    // ===== RENDER LOG =====
+    function renderLog() {
+      const log = getLog().slice().reverse();
+
+      if (log.length === 0) {
+        logBody.innerHTML = `
+          <tr>
+            <td colspan="3" class="log-empty">
+              <i class="fas fa-inbox"></i>
+              <span>No attendance records yet</span>
+            </td>
+          </tr>
+        `;
+        logCount.textContent = '0';
+        return;
+      }
+
+      logBody.innerHTML = log.map(record => {
+        const initial = record.name.charAt(0).toUpperCase();
+        return `
+          <tr>
+            <td>
+              <div class="name-cell">
+                <span class="avatar">${initial}</span>
+                ${record.name}
+              </div>
+            </td>
+            <td>${record.date}</td>
+            <td class="time-cell">${record.time}</td>
+          </tr>
+        `;
+      }).join('');
+
+      logCount.textContent = log.length;
+      updateStats();
+    }
+
+    // ===== EUCLIDEAN DISTANCE =====
+    function distance(a, b) {
+      let sum = 0;
+      for (let i = 0; i < a.length; i++) {
+        sum += (a[i] - b[i]) ** 2;
+      }
+      return Math.sqrt(sum);
+    }
+
+    // ===== SET STATUS =====
+    function setStatus(message, type = 'info') {
+      const iconMap = {
+        info: 'fas fa-info-circle',
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        warning: 'fas fa-exclamation-triangle',
+        loading: 'fas fa-spinner fa-pulse'
+      };
+
+      const icon = iconMap[type] || iconMap.info;
+      statusEl.innerHTML = `<i class="${icon}"></i> ${message}`;
+      statusEl.className = type;
+    }
+
+    // ===== GET DESCRIPTOR =====
+    async function getDescriptor() {
+      setStatus('Detecting face...', 'loading');
+
+      try {
+        const detection = await faceapi
+          .detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        if (!detection) {
+          setStatus('No face detected. Please look at the camera.', 'warning');
+          return null;
+        }
+
+        return Array.from(detection.descriptor);
+      } catch (err) {
+        setStatus(`Detection error: ${err.message}`, 'error');
+        return null;
+      }
+    }
+
+    // ===== INIT =====
+    async function init() {
+      try {
+        setStatus('Loading face recognition models...', 'loading');
+
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+          faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+        ]);
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+        });
+        video.srcObject = stream;
+
+        setStatus('Ready! Point your face at the camera.', 'success');
+        registerBtn.disabled = false;
+        scanBtn.disabled = false;
+        renderLog();
+        updateStats();
+        showToast('System ready! You can now register and mark attendance.', 'success');
+      } catch (err) {
+        setStatus(`Error: ${err.message}`, 'error');
+        showToast(`Failed to initialize: ${err.message}`, 'error');
+        console.error('Init error:', err);
+      }
+    }
+
+    // ===== REGISTER =====
+    registerBtn.addEventListener('click', async () => {
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        setStatus('Please enter a name first.', 'warning');
+        showToast('Please enter a name before registering.', 'warning');
+        return;
+      }
+
+      const descriptor = await getDescriptor();
+      if (!descriptor) return;
+
+      const people = getPeople();
+
+      // Check for duplicate name
+      if (people.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        setStatus(`"${name}" is already registered.`, 'warning');
+        showToast(`"${name}" is already registered.`, 'warning');
+        return;
+      }
+
+      people.push({ name, descriptor });
+      savePeople(people);
+
+      setStatus(`✅ Successfully registered "${name}"!`, 'success');
+      showToast(`✅ "${name}" has been registered successfully!`, 'success');
+      nameInput.value = '';
+      renderLog();
+      updateStats();
+    });
+
+    // ===== SCAN =====
+    scanBtn.addEventListener('click', async () => {
+      const descriptor = await getDescriptor();
+      if (!descriptor) return;
+
+      const people = getPeople();
+
+      if (people.length === 0) {
+        setStatus('No registered users. Please register first.', 'warning');
+        showToast('No users registered yet. Register someone first.', 'warning');
+        return;
+      }
+
+      let best = null;
+      let bestDist = Infinity;
+
+      for (const person of people) {
+        const dist = distance(descriptor, person.descriptor);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = person;
+        }
+      }
+
+      const confidence = Math.round((1 - bestDist) * 100);
+
+      if (!best || bestDist > MATCH_THRESHOLD) {
+        setStatus(`Face not recognized (${confidence}% confidence).`, 'error');
+        showToast(`Face not recognized (${confidence}% confidence).`, 'error');
+        return;
+      }
+
+      const now = new Date();
+      const date = now.toISOString().slice(0, 10);
+      const time = now.toTimeString().slice(0, 8);
+
+      const log = getLog();
+      const alreadyMarked = log.find(r => r.name === best.name && r.date === date);
+
+      if (alreadyMarked) {
+        setStatus(`⚠️ ${best.name} already marked today at ${alreadyMarked.time}.`, 'warning');
+        showToast(`⚠️ ${best.name} already marked at ${alreadyMarked.time}`, 'warning');
+        return;
+      }
+
+      log.push({ name: best.name, date, time });
+      saveLog(log);
+
+      setStatus(`✅ Attendance marked for ${best.name} at ${time}`, 'success');
+      showToast(`✅ ${best.name} - Attendance marked at ${time}`, 'success');
+      renderLog();
+      updateStats();
+    });
+
+    // ===== CLEAR =====
+    clearBtn.addEventListener('click', () => {
+      if (confirm('⚠️ This will delete ALL registered people and attendance records. Continue?')) {
+        localStorage.removeItem('people');
+        localStorage.removeItem('log');
+        renderLog();
+        updateStats();
+        setStatus('All data has been cleared.', 'info');
+        showToast('All data cleared successfully.', 'info');
+      }
+    });
+
+    // ===== KEYBOARD SHORTCUT =====
+    nameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !registerBtn.disabled) {
+        registerBtn.click();
+      }
+    });
+
+    // ===== START =====
+    init().catch(err => {
+      setStatus(`Failed to initialize: ${err.message}`, 'error');
+      showToast(`Failed to initialize: ${err.message}`, 'error');
+      console.error('Init error:', err);
+    });
+
+  })();
+</script>
+
+</body>
+</html>
